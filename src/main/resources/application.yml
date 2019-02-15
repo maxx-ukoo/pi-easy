@@ -1,3 +1,9 @@
 micronaut:
-    application:
-        name: picontrol
+  application:
+    name: picontrol
+  router:
+    static-resources:
+      default:
+        paths:
+          - "classpath:static"
+        mapping: "/static/**"
