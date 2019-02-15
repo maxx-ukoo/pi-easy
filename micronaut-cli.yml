@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: ua.net.maxx
+---
+testFramework: junit
+sourceLanguage: java
