@@ -2,24 +2,27 @@ import React from 'react'
 import { Label, Menu, Tab } from 'semantic-ui-react'
 import { Container, Header } from 'semantic-ui-react'
 
+import SystemTab from './components/SystemTab';
+import PinListTab from './components/PinListTab';
+
 const panes = [
   {
-    menuItem: { key: 'users', icon: 'users', content: 'Users' },
-    render: () => <Tab.Pane>Tab 1 Content</Tab.Pane>,
+    menuItem: { key: 'system', icon: 'info', content: 'System' },
+    render: () => <Tab.Pane><SystemTab/></Tab.Pane>,
   },
   {
     menuItem: (
-      <Menu.Item key='messages'>
-        Messages<Label>15</Label>
+      <Menu.Item key='pinList'>
+        Pin list<Label>15</Label>
       </Menu.Item>
     ),
-    render: () => <Tab.Pane>Tab 2 Content</Tab.Pane>,
+    render: () => <Tab.Pane><PinListTab/></Tab.Pane>,
   },
 ]
 
 const App = () => (
 	<Container>
- 		<Header as='h2' image='/images/icons/school.png' content='PI Control' />
+ 		<Header as='h2' image='static/images/raspberrypi.png' content='PI Control' />
  		<Tab panes={panes} />
  	</Container>
 )
