@@ -1,5 +1,7 @@
 package ua.net.maxx.controller;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +31,11 @@ public class ApiController {
     
     @Get("/pins")
     public Pin[]  pins() {
-    	return gpioSevice.allPins();
+    	Pin[] pins = gpioSevice.allPins();
+    	Arrays.sort(pins, Comparator.comparingInt(Pin::getAddress));
+    	return pins;
+    	
+    	
     }
 
 }

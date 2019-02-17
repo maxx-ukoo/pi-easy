@@ -13,7 +13,7 @@ const panes = [
   {
     menuItem: (
       <Menu.Item key='pinList'>
-        Pin list<Label>15</Label>
+        Pin config<Label>15</Label>
       </Menu.Item>
     ),
     render: () => <Tab.Pane><PinListTab/></Tab.Pane>,
