@@ -87948,11 +87948,7 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(PinListTab).call(this, props));
 
     _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "onPinModeChange", function (pin, newMode) {
-      console.log('--------------------------');
-      console.log(pin);
-      console.log(newMode);
-      console.log('--------------------------'); //const pin = find(this.state.pins, { address: Number(id) });
-
+      //const pin = find(this.state.pins, { address: Number(id) });
       var pinSettingsPayload = {
         address: pin.address,
         name: pin.name,
@@ -88103,6 +88099,7 @@ function (_Component) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Dropdown"], {
           simple: true,
           item: true,
+          selection: true,
           defaultValue: defaultValue,
           onChange: this.onChange,
           options: stateOptions
@@ -88180,11 +88177,10 @@ function (_Component) {
             defaultValue = mode;
           }
         });
-        console.log('defaultValue: ' + defaultValue);
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Dropdown"], {
           simple: true,
           item: true,
-          defaultValue: defaultValue,
+          value: defaultValue,
           options: stateOptions
         });
       }
@@ -88220,13 +88216,15 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
@@ -88246,8 +88244,43 @@ function (_React$Component) {
     _classCallCheck(this, SystemTab);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(SystemTab).call(this, props));
+
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "onPlatformChange", function (e, data) {
+      _this.setState({
+        question: true,
+        platform: data.value
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "onPlatformChangeConfirmed", function (e, data) {
+      var payload = {
+        platform: _this.state.platform
+      };
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.put('/api/config', JSON.stringify(payload), {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(function (response) {
+        var newState = Object.assign({}, _this.state);
+        newState.config = response.data;
+
+        _this.setState(newState);
+      });
+
+      _this.setState({
+        question: false
+      });
+    });
+
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "close", function () {
+      _this.setState({
+        question: false
+      });
+    });
+
     _this.state = {
-      sysinfo: {}
+      config: {},
+      question: false
     };
     return _this;
   }
@@ -88257,9 +88290,9 @@ function (_React$Component) {
     value: function componentDidMount() {
       var _this2 = this;
 
-      axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/sysinfo').then(function (response) {
+      axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/config').then(function (response) {
         var newState = Object.assign({}, _this2.state);
-        newState.sysinfo = response.data;
+        newState.config = response.data;
 
         _this2.setState(newState);
       });
@@ -88267,15 +88300,49 @@ function (_React$Component) {
   }, {
     key: "render",
     value: function render() {
-      var sysinfo = this.state.sysinfo;
-      return React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["List"], {
+      var _this$state = this.state,
+          question = _this$state.question,
+          config = _this$state.config;
+      var stateOptions = [];
+      var selected = '';
+
+      if (config.available) {
+        config.available.map(function (mode) {
+          if (config.platformID && mode == config.platformID.platformType) {
+            selected = mode;
+          }
+
+          stateOptions.push({
+            key: mode,
+            value: mode,
+            text: mode
+          });
+        });
+      }
+
+      return React.createElement("div", null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Modal"], {
+        size: "tiny",
+        open: question,
+        onClose: this.close
+      }, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Modal"].Header, null, "Change Platform"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Modal"].Content, null, React.createElement("p", null, "Are you sure you want to change platform")), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Modal"].Actions, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Button"], {
+        negative: true,
+        onClick: this.close
+      }, "No"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Button"], {
+        positive: true,
+        onClick: this.onPlatformChangeConfirmed
+      }, "Yes"))), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["List"], {
         divided: true,
         selection: true
       }, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["List"].Item, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Label"], {
         horizontal: true
-      }, "Platform ID:"), sysinfo.platformID), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["List"].Item, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Label"], {
+      }, "Current platform:"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Dropdown"], {
+        selection: true,
+        value: selected,
+        options: stateOptions,
+        onChange: this.onPlatformChange
+      })), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["List"].Item, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Label"], {
         horizontal: true
-      }, "Platform Name:"), sysinfo.platformName));
+      }, "Platform Name:"), config.platformName)));
     }
   }]);
 

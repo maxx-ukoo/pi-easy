@@ -1,5 +1,7 @@
 package ua.net.maxx.controller;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -21,6 +23,7 @@ import ua.net.maxx.controller.dto.PinSettings;
 import ua.net.maxx.service.GPIOSevice;
 import ua.net.maxx.storage.domain.GlobalConfiguration;
 import ua.net.maxx.storage.service.StorageService;
+import ua.net.maxx.utils.AppRestarter;
 
 @Controller("/api")
 public class ApiController {
@@ -60,16 +63,24 @@ public class ApiController {
 		Map<String, Object> config = new HashMap<>();
 		config.put("platformID", storageService.getGlobalConfiguration());
 		config.put("available", Platform.values());
-        config.put("platformName", PlatformManager.getPlatform().getLabel());
+		config.put("platformName", PlatformManager.getPlatform().getLabel());
 		return config;
 	}
 
-    @Put("/config")
-    public Map<String, Object> updateConfig(Platform platform) {
-        GlobalConfiguration currentConfig = storageService.getGlobalConfiguration();
-        currentConfig.setPlatformType(platform);
-        storageService.updateGlobalConfiguration(currentConfig);
-        return getConfig();
-    }
+	@Put("/config")
+	public Map<String, Object> updateConfig(Platform platform) {
+		GlobalConfiguration currentConfig = storageService.getGlobalConfiguration();
+		currentConfig.setPlatformType(platform);
+		storageService.updateGlobalConfiguration(currentConfig);
+		new Thread(() -> {
+			try {
+				AppRestarter.restartApplication();
+				Thread.sleep(2000);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
+		return getConfig();
+	}
 
 }
