@@ -21,9 +21,8 @@ class PullUpModeList extends Component {
   	 		}
   	 		
   	 	})
-  	 	console.log('defaultValue: ' + defaultValue)
   		return (
-    			<Dropdown simple item defaultValue={defaultValue} options={stateOptions} />
+    			<Dropdown simple item value={defaultValue} options={stateOptions} />
     	) 	
   	 }
   }

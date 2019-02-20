@@ -26,7 +26,7 @@ class PinModesList extends Component {
   	 		}
   	 	})
   		return (
-    			<Dropdown simple item 
+    			<Dropdown simple item selection
     				defaultValue={defaultValue}
     				onChange={this.onChange} 
     				options={stateOptions} />

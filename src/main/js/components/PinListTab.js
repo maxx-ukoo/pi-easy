@@ -26,11 +26,7 @@ class PinListTab extends React.Component {
 	}
 	
 	onPinModeChange = (pin, newMode) => {
-	    console.log('--------------------------');
-    	console.log(pin);
-    	console.log(newMode);
-    	console.log('--------------------------');
-    	
+
     	//const pin = find(this.state.pins, { address: Number(id) });
     	
     	const pinSettingsPayload = {

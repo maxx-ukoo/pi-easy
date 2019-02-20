@@ -48,7 +48,6 @@
 			<groupId>io.micronaut</groupId>
 			<artifactId>micronaut-views</artifactId>
 			<scope>compile</scope>
-			<version>${micronaut.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.pi4j</groupId>
@@ -79,6 +78,21 @@
 			<groupId>io.micronaut</groupId>
 			<artifactId>micronaut-http-server-netty</artifactId>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.micronaut.configuration</groupId>
+			<artifactId>micronaut-hibernate-jpa</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.micronaut.configuration</groupId>
+			<artifactId>micronaut-jdbc-hikari</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.micronaut</groupId>

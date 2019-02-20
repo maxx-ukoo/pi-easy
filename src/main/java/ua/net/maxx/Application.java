@@ -15,17 +15,12 @@ import io.micronaut.runtime.Micronaut;
 
 public class Application {
 
-    public static void main(String[] args) {
-    	try {
-			PlatformManager.setPlatform(Platform.ORANGEPI);
-			preparePins();
-		} catch (PlatformAlreadyAssignedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    public static void main(String[] args) throws PlatformAlreadyAssignedException {
+        PlatformManager.setPlatform(Platform.SIMULATED);
+
         Micronaut.run(Application.class);
     }
-    
+
     public static void preparePins() {
         switch (PlatformManager.getPlatform()) {
             case BANANAPI: {
