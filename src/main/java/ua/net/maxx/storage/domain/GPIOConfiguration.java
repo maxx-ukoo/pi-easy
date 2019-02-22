@@ -20,7 +20,7 @@ public class GPIOConfiguration {
     private Long id;
 
     @NotNull
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @NotNull
@@ -28,11 +28,11 @@ public class GPIOConfiguration {
     private Integer address;
 
     @NotNull
-    @Column(name = "mode", nullable = false, unique = true)
+    @Column(name = "mode", nullable = false)
     private PinMode mode;
 
     @NotNull
-    @Column(name = "pullup", nullable = false, unique = true)
+    @Column(name = "pullup", nullable = false)
     private PinPullResistance pullUp;
 
     public Long getId() {

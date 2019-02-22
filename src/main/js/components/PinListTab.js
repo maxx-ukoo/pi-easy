@@ -4,7 +4,6 @@ import { Input, Icon, List, Table, Menu, Label } from 'semantic-ui-react'
 
 
 import axios from "axios";
-import { find } from 'lodash';
 
 import PinModesList from './PinModesList'
 import PullUpModeList from './PullUpModeList'
@@ -13,21 +12,25 @@ class PinListTab extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {pins: {}};
+		this.state = { config: {
+							pins: [],
+							config: []
+						}
+					};
 	}
 	
 	componentDidMount() {
 	    axios.get('/api/pins')
             .then(response => {
                 let newState = Object.assign({}, this.state);
-                newState.pins = response.data;
+                newState.config = response.data;
                 this.setState(newState);
             });
 	}
 	
 	onPinModeChange = (pin, newMode) => {
 
-    	//const pin = find(this.state.pins, { address: Number(id) });
+
     	
     	const pinSettingsPayload = {
     	 	address: pin.address,
@@ -47,7 +50,16 @@ class PinListTab extends React.Component {
   	}
 
 	render() {
-	    let { pins } = this.state;
+	    let { pins } = this.state.config;
+	    let { config } = this.state.config;
+	    
+	    if (!Array.isArray(config) || !config.length) {
+	    	config = [];
+	    }
+	    
+	    console.log('--------------')
+	    console.log(pins);
+	    console.log(config);
 	    
 	    if (!Array.isArray(pins) || !pins.length) {
             return  <Label>Loading...</Label>
@@ -68,7 +80,7 @@ class PinListTab extends React.Component {
 			          <Table.Row>
 			        		<Table.Cell><Input value={pin.name} /></Table.Cell>
 			        		<Table.Cell>{pin.address}</Table.Cell>
-			        		<Table.Cell><PinModesList onPinModeChange={this.onPinModeChange} pin={pin}/></Table.Cell>
+			        		<Table.Cell><PinModesList pinConfig={config} onPinModeChange={this.onPinModeChange} pin={pin}/></Table.Cell>
 			        		<Table.Cell><PullUpModeList modes={pin.supportedPinPullResistance}/></Table.Cell>
 			      	</Table.Row>
 			      	))}  

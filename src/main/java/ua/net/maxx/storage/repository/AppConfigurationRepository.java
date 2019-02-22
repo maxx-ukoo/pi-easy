@@ -1,6 +1,5 @@
 package ua.net.maxx.storage.repository;
 
-import com.pi4j.platform.Platform;
 import ua.net.maxx.storage.domain.GlobalConfiguration;
 
 import javax.validation.constraints.NotBlank;

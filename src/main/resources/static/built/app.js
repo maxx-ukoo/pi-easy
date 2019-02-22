@@ -87901,10 +87901,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! semantic-ui-react */ "./node_modules/semantic-ui-react/dist/es/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
-/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _PinModesList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PinModesList */ "./src/main/js/components/PinModesList.js");
-/* harmony import */ var _PullUpModeList__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./PullUpModeList */ "./src/main/js/components/PullUpModeList.js");
+/* harmony import */ var _PinModesList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PinModesList */ "./src/main/js/components/PinModesList.js");
+/* harmony import */ var _PullUpModeList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PullUpModeList */ "./src/main/js/components/PullUpModeList.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -87934,7 +87932,6 @@ var ReactDOM = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/in
 
 
 
-
 var PinListTab =
 /*#__PURE__*/
 function (_React$Component) {
@@ -87948,7 +87945,6 @@ function (_React$Component) {
     _this = _possibleConstructorReturn(this, _getPrototypeOf(PinListTab).call(this, props));
 
     _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "onPinModeChange", function (pin, newMode) {
-      //const pin = find(this.state.pins, { address: Number(id) });
       var pinSettingsPayload = {
         address: pin.address,
         name: pin.name,
@@ -87966,7 +87962,10 @@ function (_React$Component) {
     });
 
     _this.state = {
-      pins: {}
+      config: {
+        pins: [],
+        config: []
+      }
     };
     return _this;
   }
@@ -87978,7 +87977,7 @@ function (_React$Component) {
 
       axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/pins').then(function (response) {
         var newState = Object.assign({}, _this2.state);
-        newState.pins = response.data;
+        newState.config = response.data;
 
         _this2.setState(newState);
       });
@@ -87988,7 +87987,16 @@ function (_React$Component) {
     value: function render() {
       var _this3 = this;
 
-      var pins = this.state.pins;
+      var pins = this.state.config.pins;
+      var config = this.state.config.config;
+
+      if (!Array.isArray(config) || !config.length) {
+        config = [];
+      }
+
+      console.log('--------------');
+      console.log(pins);
+      console.log(config);
 
       if (!Array.isArray(pins) || !pins.length) {
         return React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Label"], null, "Loading...");
@@ -87998,10 +88006,11 @@ function (_React$Component) {
         }, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Header, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Row, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Name"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Address"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Mode"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "PullUP"))), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Body, null, pins.map(function (pin) {
           return React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Row, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Cell, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Input"], {
             value: pin.name
-          })), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Cell, null, pin.address), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Cell, null, React.createElement(_PinModesList__WEBPACK_IMPORTED_MODULE_3__["default"], {
+          })), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Cell, null, pin.address), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Cell, null, React.createElement(_PinModesList__WEBPACK_IMPORTED_MODULE_2__["default"], {
+            pinConfig: config,
             onPinModeChange: _this3.onPinModeChange,
             pin: pin
-          })), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Cell, null, React.createElement(_PullUpModeList__WEBPACK_IMPORTED_MODULE_4__["default"], {
+          })), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Cell, null, React.createElement(_PullUpModeList__WEBPACK_IMPORTED_MODULE_3__["default"], {
             modes: pin.supportedPinPullResistance
           })));
         })));
@@ -88028,6 +88037,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! semantic-ui-react */ "./node_modules/semantic-ui-react/dist/es/index.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
+/* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -88047,6 +88058,7 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -88082,25 +88094,34 @@ function (_Component) {
     key: "render",
     value: function render() {
       var supportedPinModes = this.props.pin.supportedPinModes;
+      var defaultValue;
+      var config = Object(lodash__WEBPACK_IMPORTED_MODULE_2__["find"])(this.props.pinConfig, {
+        address: Number(this.props.pin.address)
+      });
+      console.log('config:' + config);
+      console.log(this.props.pin);
+      console.log(this.props.pinConfig);
+      console.log(config);
+      console.log('pin' + this.props.pin);
+      console.log(this.props.pin);
+
+      if (config) {
+        defaultValue = config.pinMode;
+      }
+
       if (!Array.isArray(supportedPinModes) || !supportedPinModes.length) return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Label"], null);else {
         var stateOptions = [];
-        var defaultValue;
         supportedPinModes.map(function (mode) {
           stateOptions.push({
             key: mode,
             value: mode,
             text: mode
           });
-
-          if (defaultValue == null) {
-            defaultValue = mode;
-          }
         });
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Dropdown"], {
           simple: true,
           item: true,
-          selection: true,
-          defaultValue: defaultValue,
+          value: defaultValue,
           onChange: this.onChange,
           options: stateOptions
         });

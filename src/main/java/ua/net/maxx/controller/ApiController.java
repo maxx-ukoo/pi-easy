@@ -1,17 +1,16 @@
 package ua.net.maxx.controller;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import com.pi4j.io.gpio.GpioPin;
-import com.pi4j.io.gpio.Pin;
+import com.pi4j.io.gpio.PinMode;
+import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.platform.Platform;
 import com.pi4j.platform.PlatformManager;
 
@@ -47,10 +46,15 @@ public class ApiController {
 	}
 
 	@Get("/pins")
-	public Pin[] pins() {
-		Pin[] pins = gpioSevice.allPins();
-		Arrays.sort(pins, Comparator.comparingInt(Pin::getAddress));
-		return pins;
+	public Map<String, Object> pins() {
+		Map<String, Object> config = new HashMap<>();
+		config.put("pins", gpioSevice.allPins());
+		Collection<GpioPin> provisionedPins = gpioSevice.getProvisionedPins();
+		List<PinSettings> list = provisionedPins.stream().map(item -> PinSettings.fromGpioPin(item))
+		.collect(Collectors.toList());		
+		list.add(new PinSettings(2, "Pin 2", PinMode.DIGITAL_OUTPUT, PinPullResistance.PULL_DOWN));
+		config.put("config", list);
+		return config;
 	}
 
 	@Put("/pin/config")
