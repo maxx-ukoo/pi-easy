@@ -6,6 +6,7 @@ import com.pi4j.io.gpio.BpiPin;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPin;
+import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.NanoPiPin;
 import com.pi4j.io.gpio.OdroidC1Pin;
@@ -47,7 +48,8 @@ public class GPIOSevice {
 
 	GpioController gpio;
 
-	private final Map<Pin, GpioPinDigitalOutput> outputMap = new HashMap<>();
+	private final Map<Integer, GpioPinDigitalOutput> outputMap = new HashMap<>();
+	private final Map<Integer, GpioPinDigitalInput> inputMap = new HashMap<>();
 
 	@PostConstruct
 	private void initialize() {
@@ -101,7 +103,7 @@ public class GPIOSevice {
 	}
 
 	public String executeCommand(GPIOCommand command) {
-		GpioPinDigitalOutput currentPin = outputMap.get(command.getPin());
+		GpioPinDigitalOutput currentPin = outputMap.get(command.getPin().getAddress());
 		if (currentPin == null) {
 			throw new IllegalStateException(String.format("Pin %s not configured", command.getPin().getName()));
 		}
@@ -119,12 +121,14 @@ public class GPIOSevice {
 	
 	private void configurePinInternal(int address, String pinName, PinMode pinMode, PinPullResistance pullResistance) {
 		Pin pin = PinProvider.getPinByAddress(address);
+		inputMap.remove(pin.getAddress());
+		outputMap.remove(pin.getAddress());
 		switch (pinMode) {
 			case DIGITAL_INPUT:
-				gpio.provisionDigitalInputPin(pin, pullResistance);
+				inputMap.put(pin.getAddress(), gpio.provisionDigitalInputPin(pin, pullResistance));
 				break;
 			case DIGITAL_OUTPUT:
-				gpio.provisionDigitalOutputPin(pin, pinName, PinState.LOW);
+				outputMap.put(pin.getAddress(), gpio.provisionDigitalOutputPin(pin, pinName, PinState.LOW));
 				break;
 			default:
 				throw new UnsupportedOperationException(String.format("Operation %s not supported", pinMode));
@@ -150,5 +154,18 @@ public class GPIOSevice {
 		configurePin(pinSettings.getAddress(), pinSettings.getName(), pinSettings.getPinMode(),
 				pinSettings.getPullResistance());
 	}
+	
+	public Platform getCurrentPlatform() {
+		return storageService.getGlobalConfiguration().getPlatformType();
+	}
+
+	/*public void getPinsState() {
+		outputMap.entrySet().stream()
+		.forEach(output -> {
+			output.getValue().getState()
+		});
+		// TODO Auto-generated method stub
+		
+	}*/
 
 }

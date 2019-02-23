@@ -57,10 +57,6 @@ class PinListTab extends React.Component {
 	    	config = [];
 	    }
 	    
-	    console.log('--------------')
-	    console.log(pins);
-	    console.log(config);
-	    
 	    if (!Array.isArray(pins) || !pins.length) {
             return  <Label>Loading...</Label>
         } else {
@@ -72,6 +68,7 @@ class PinListTab extends React.Component {
 			        <Table.HeaderCell>Address</Table.HeaderCell>
 			        <Table.HeaderCell>Mode</Table.HeaderCell>
 			        <Table.HeaderCell>PullUP</Table.HeaderCell>
+			        <Table.HeaderCell>State</Table.HeaderCell>
 			      </Table.Row>
 			    </Table.Header>
 

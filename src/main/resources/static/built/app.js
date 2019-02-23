@@ -643,6 +643,20 @@ var env = __webpack_require__(/*! exenv */ "./node_modules/exenv/index.js");
 var PropTypes = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
+function _typeof(obj) {
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function (obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function (obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -838,6 +852,16 @@ function normalizeHandlers(handlers) {
   return Array.isArray(handlers) ? handlers : [handlers];
 }
 /**
+ * Asserts that the passed value is React.RefObject
+ *
+ * @see https://github.com/facebook/react/blob/v16.8.2/packages/react-reconciler/src/ReactFiberCommitWork.js#L665
+ */
+
+var isRefObject = function isRefObject(ref // eslint-disable-next-line
+) {
+  return ref !== null && _typeof(ref) === 'object' && ref.hasOwnProperty('current');
+};
+/**
  * Normalizes `target` for EventStack, because `target` can be passed as `boolean` or `string`.
  *
  * @see https://jsperf.com/suir-normalize-target
@@ -846,6 +870,7 @@ function normalizeHandlers(handlers) {
 function normalizeTarget(target) {
   if (target === 'document') return document;
   if (target === 'window') return window;
+  if (isRefObject(target)) return target.current || document;
   return target || document;
 }
 
@@ -1154,7 +1179,9 @@ EventStack$1.propTypes = {
   /** A DOM element on which we will subscribe. */
   target: PropTypes.oneOfType([PropTypes.oneOf(['document', 'window']), // Heads up!
   // This condition for SSR safety.
-  PropTypes.instanceOf(env.canUseDOM ? HTMLElement : Object)])
+  PropTypes.instanceOf(env.canUseDOM ? HTMLElement : Object), PropTypes.shape({
+    current: PropTypes.object
+  })])
 };
 
 exports.instance = instance;
@@ -87878,7 +87905,7 @@ var panes = [{
 var App = function App() {
   return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Container"], null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Header"], {
     as: "h2",
-    image: "static/images/raspberrypi.png",
+    image: "image",
     content: "PI Control"
   }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Tab"], {
     panes: panes
@@ -87992,16 +88019,12 @@ function (_React$Component) {
         config = [];
       }
 
-      console.log('--------------');
-      console.log(pins);
-      console.log(config);
-
       if (!Array.isArray(pins) || !pins.length) {
         return React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Label"], null, "Loading...");
       } else {
         return React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"], {
           celled: true
-        }, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Header, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Row, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Name"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Address"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Mode"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "PullUP"))), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Body, null, pins.map(function (pin) {
+        }, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Header, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Row, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Name"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Address"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Mode"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "PullUP"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "State"))), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Body, null, pins.map(function (pin) {
           return React.createElement(_PinRow__WEBPACK_IMPORTED_MODULE_2__["default"], {
             pin: pin,
             pinConfig: config,
@@ -88033,6 +88056,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! semantic-ui-react */ "./node_modules/semantic-ui-react/dist/es/index.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_3__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -88052,6 +88077,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
 
 
 
@@ -88081,6 +88108,29 @@ function (_Component) {
       _this.props.onPinModeChange(pin, data.value);
     });
 
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "onStateChange", function (e, data) {
+      var pin = _this.props.pin;
+      console.log(data.checked);
+      var value;
+
+      if (data.checked) {
+        value = 'HIGH';
+      } else {
+        value = 'LOW';
+      }
+
+      var cmd = 'GPIO,' + pin.address + ',' + value;
+      console.log(cmd);
+      var url = '/control';
+      axios__WEBPACK_IMPORTED_MODULE_3___default.a.get(url, {
+        params: {
+          cmd: cmd
+        }
+      }).then(function (response) {
+        console.log(response);
+      });
+    });
+
     return _this;
   }
 
@@ -88108,34 +88158,41 @@ function (_Component) {
       }
 
       var pullUpModes = [];
-      pin.supportedPinPullResistance.map(function (mode) {
-        pullUpModes.push({
-          key: mode,
-          value: mode,
-          text: mode
-        });
-      });
+      console.log('1: => ' + pin.supportedPinPullResistance);
+
+      if (pin.supportedPinPullResistance) {
+        if (!Array.isArray(pin.supportedPinPullResistance) || !pin.supportedPinPullResistance.length) {
+          console.log('2: => ' + pin.supportedPinPullResistance);
+          pin.supportedPinPullResistance.map(function (mode) {
+            pullUpModes.push({
+              key: mode,
+              value: mode,
+              text: mode
+            });
+          });
+        }
+      }
+
       var defaultPullUpMode = pullUpModes[0];
-      console.log('===============================');
-      console.log(defaultPinModeValue);
-      console.log(defaultPullUpMode);
-      console.log('===============================');
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Table"].Row, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Table"].Cell, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Input"], {
         value: pin.name
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Table"].Cell, null, pin.address), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Table"].Cell, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Dropdown"], {
-        simple: true,
         selection: true,
         placeholder: "Select mode",
         value: defaultPinModeValue,
         onChange: this.onPinModeChange,
         options: pinModes
       })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Table"].Cell, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Dropdown"], {
-        simple: true,
         selection: true,
         placeholder: "Select pullUP",
         value: defaultPullUpMode,
         options: pullUpModes
-      })));
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Table"].Cell, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Segment"], {
+        compact: true
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Checkbox"], {
+        toggle: true,
+        onChange: this.onStateChange
+      }))));
     }
   }]);
 

@@ -1,6 +1,8 @@
 package ua.net.maxx.controller;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,8 +11,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import com.pi4j.io.gpio.GpioPin;
-import com.pi4j.io.gpio.PinMode;
-import com.pi4j.io.gpio.PinPullResistance;
+import com.pi4j.io.gpio.Pin;
 import com.pi4j.platform.Platform;
 import com.pi4j.platform.PlatformManager;
 
@@ -40,19 +41,36 @@ public class ApiController {
 			System.out.println(pin.getName());
 			System.out.println(pin);
 		});
-		return pins;
-		// Arrays.sort(pins, Comparator.comparingInt(Pin::getAddress));
-		// return pins;
+		return pins.stream().sorted(new Comparator<GpioPin>() {
+			public int compare(GpioPin o1, GpioPin o2) {
+				return Integer.valueOf(o1.getPin().getAddress()).compareTo(Integer.valueOf(o2.getPin().getAddress()));
+			}
+		}).collect(Collectors.toList());
 	}
 
 	@Get("/pins")
 	public Map<String, Object> pins() {
 		Map<String, Object> config = new HashMap<>();
-		config.put("pins", gpioSevice.allPins());
+
+		Pin[] pins = gpioSevice.allPins();
+		Arrays.sort(pins, new Comparator<Pin>() {
+			public int compare(Pin o1, Pin o2) {
+				return Integer.valueOf(o1.getAddress()).compareTo(Integer.valueOf(o2.getAddress()));
+			}
+		});
+
+		config.put("pins", pins);
 		Collection<GpioPin> provisionedPins = gpioSevice.getProvisionedPins();
 		List<PinSettings> list = provisionedPins.stream().map(item -> PinSettings.fromGpioPin(item))
-		.collect(Collectors.toList());		
-		list.add(new PinSettings(2, "Pin 2", PinMode.DIGITAL_OUTPUT, PinPullResistance.PULL_DOWN));
+				.sorted(new Comparator<PinSettings>() {
+					public int compare(PinSettings o1, PinSettings o2) {
+						return Integer.valueOf(o1.getAddress()).compareTo(Integer.valueOf(o2.getAddress()));
+					}
+				}).collect(Collectors.toList());
+		config.put("config", list);
+
+		// gpioSevice.getPinsState();
+
 		config.put("config", list);
 		return config;
 	}

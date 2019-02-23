@@ -22,7 +22,7 @@ const panes = [
 
 const App = () => (
 	<Container>
- 		<Header as='h2' image='static/images/raspberrypi.png' content='PI Control' />
+ 		<Header as='h2' image='image' content='PI Control' />
  		<Tab panes={panes} />
  	</Container>
 )
