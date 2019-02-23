@@ -5,8 +5,8 @@ import { Input, Icon, List, Table, Menu, Label } from 'semantic-ui-react'
 
 import axios from "axios";
 
-import PinModesList from './PinModesList'
-import PullUpModeList from './PullUpModeList'
+import PinRow from './PinRow'
+
 
 class PinListTab extends React.Component {
 
@@ -77,12 +77,7 @@ class PinListTab extends React.Component {
 
 			    <Table.Body>
 			     {pins.map(pin => (
-			          <Table.Row>
-			        		<Table.Cell><Input value={pin.name} /></Table.Cell>
-			        		<Table.Cell>{pin.address}</Table.Cell>
-			        		<Table.Cell><PinModesList pinConfig={config} onPinModeChange={this.onPinModeChange} pin={pin}/></Table.Cell>
-			        		<Table.Cell><PullUpModeList modes={pin.supportedPinPullResistance}/></Table.Cell>
-			      	</Table.Row>
+			     	  <PinRow pin={pin} pinConfig={config} onPinModeChange={this.onPinModeChange} />
 			      	))}  
 			    </Table.Body>
  			 </Table>)

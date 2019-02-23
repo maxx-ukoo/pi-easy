@@ -87901,8 +87901,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! semantic-ui-react */ "./node_modules/semantic-ui-react/dist/es/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _PinModesList__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PinModesList */ "./src/main/js/components/PinModesList.js");
-/* harmony import */ var _PullUpModeList__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./PullUpModeList */ "./src/main/js/components/PullUpModeList.js");
+/* harmony import */ var _PinRow__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PinRow */ "./src/main/js/components/PinRow.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -87926,7 +87925,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var React = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
 var ReactDOM = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-
 
 
 
@@ -88004,15 +88002,11 @@ function (_React$Component) {
         return React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"], {
           celled: true
         }, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Header, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Row, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Name"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Address"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "Mode"), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].HeaderCell, null, "PullUP"))), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Body, null, pins.map(function (pin) {
-          return React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Row, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Cell, null, React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Input"], {
-            value: pin.name
-          })), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Cell, null, pin.address), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Cell, null, React.createElement(_PinModesList__WEBPACK_IMPORTED_MODULE_2__["default"], {
+          return React.createElement(_PinRow__WEBPACK_IMPORTED_MODULE_2__["default"], {
+            pin: pin,
             pinConfig: config,
-            onPinModeChange: _this3.onPinModeChange,
-            pin: pin
-          })), React.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_0__["Table"].Cell, null, React.createElement(_PullUpModeList__WEBPACK_IMPORTED_MODULE_3__["default"], {
-            modes: pin.supportedPinPullResistance
-          })));
+            onPinModeChange: _this3.onPinModeChange
+          });
         })));
       }
     }
@@ -88025,10 +88019,10 @@ function (_React$Component) {
 
 /***/ }),
 
-/***/ "./src/main/js/components/PinModesList.js":
-/*!************************************************!*\
-  !*** ./src/main/js/components/PinModesList.js ***!
-  \************************************************/
+/***/ "./src/main/js/components/PinRow.js":
+/*!******************************************!*\
+  !*** ./src/main/js/components/PinRow.js ***!
+  \******************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -88063,25 +88057,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
-var PinModesList =
+var PinRow =
 /*#__PURE__*/
 function (_Component) {
-  _inherits(PinModesList, _Component);
+  _inherits(PinRow, _Component);
 
-  function PinModesList() {
+  function PinRow() {
     var _getPrototypeOf2;
 
     var _this;
 
-    _classCallCheck(this, PinModesList);
+    _classCallCheck(this, PinRow);
 
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
 
-    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(PinModesList)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    _this = _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(PinRow)).call.apply(_getPrototypeOf2, [this].concat(args)));
 
-    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "onChange", function (e, data) {
+    _defineProperty(_assertThisInitialized(_assertThisInitialized(_this)), "onPinModeChange", function (e, data) {
       var pin = _this.props.pin;
 
       _this.props.onPinModeChange(pin, data.value);
@@ -88090,128 +88084,65 @@ function (_Component) {
     return _this;
   }
 
-  _createClass(PinModesList, [{
+  _createClass(PinRow, [{
     key: "render",
     value: function render() {
-      var supportedPinModes = this.props.pin.supportedPinModes;
-      var defaultValue;
+      var _this$props = this.props,
+          pin = _this$props.pin,
+          pinConfig = _this$props.pinConfig;
+      var pinModes = [];
+      pin.supportedPinModes.map(function (mode) {
+        pinModes.push({
+          key: mode,
+          value: mode,
+          text: mode
+        });
+      });
+      var defaultPinModeValue;
       var config = Object(lodash__WEBPACK_IMPORTED_MODULE_2__["find"])(this.props.pinConfig, {
         address: Number(this.props.pin.address)
       });
-      console.log('config:' + config);
-      console.log(this.props.pin);
-      console.log(this.props.pinConfig);
-      console.log(config);
-      console.log('pin' + this.props.pin);
-      console.log(this.props.pin);
 
       if (config) {
-        defaultValue = config.pinMode;
+        defaultPinModeValue = config.pinMode;
       }
 
-      if (!Array.isArray(supportedPinModes) || !supportedPinModes.length) return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Label"], null);else {
-        var stateOptions = [];
-        supportedPinModes.map(function (mode) {
-          stateOptions.push({
-            key: mode,
-            value: mode,
-            text: mode
-          });
+      var pullUpModes = [];
+      pin.supportedPinPullResistance.map(function (mode) {
+        pullUpModes.push({
+          key: mode,
+          value: mode,
+          text: mode
         });
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Dropdown"], {
-          simple: true,
-          item: true,
-          value: defaultValue,
-          onChange: this.onChange,
-          options: stateOptions
-        });
-      }
+      });
+      var defaultPullUpMode = pullUpModes[0];
+      console.log('===============================');
+      console.log(defaultPinModeValue);
+      console.log(defaultPullUpMode);
+      console.log('===============================');
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Table"].Row, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Table"].Cell, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Input"], {
+        value: pin.name
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Table"].Cell, null, pin.address), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Table"].Cell, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Dropdown"], {
+        simple: true,
+        selection: true,
+        placeholder: "Select mode",
+        value: defaultPinModeValue,
+        onChange: this.onPinModeChange,
+        options: pinModes
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Table"].Cell, null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Dropdown"], {
+        simple: true,
+        selection: true,
+        placeholder: "Select pullUP",
+        value: defaultPullUpMode,
+        options: pullUpModes
+      })));
     }
   }]);
 
-  return PinModesList;
+  return PinRow;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
-/* harmony default export */ __webpack_exports__["default"] = (PinModesList);
-
-/***/ }),
-
-/***/ "./src/main/js/components/PullUpModeList.js":
-/*!**************************************************!*\
-  !*** ./src/main/js/components/PullUpModeList.js ***!
-  \**************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! semantic-ui-react */ "./node_modules/semantic-ui-react/dist/es/index.js");
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-
-var PullUpModeList =
-/*#__PURE__*/
-function (_Component) {
-  _inherits(PullUpModeList, _Component);
-
-  function PullUpModeList() {
-    _classCallCheck(this, PullUpModeList);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(PullUpModeList).apply(this, arguments));
-  }
-
-  _createClass(PullUpModeList, [{
-    key: "render",
-    value: function render() {
-      var modes = this.props.modes;
-      if (!Array.isArray(modes) || !modes.length) return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Label"], null);else {
-        var stateOptions = [];
-        var defaultValue;
-        modes.map(function (mode) {
-          stateOptions.push({
-            key: mode,
-            value: mode,
-            text: mode
-          });
-
-          if (defaultValue == null) {
-            defaultValue = mode;
-          }
-        });
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(semantic_ui_react__WEBPACK_IMPORTED_MODULE_1__["Dropdown"], {
-          simple: true,
-          item: true,
-          value: defaultValue,
-          options: stateOptions
-        });
-      }
-    }
-  }]);
-
-  return PullUpModeList;
-}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
-
-/* harmony default export */ __webpack_exports__["default"] = (PullUpModeList);
+/* harmony default export */ __webpack_exports__["default"] = (PinRow);
 
 /***/ }),
 
