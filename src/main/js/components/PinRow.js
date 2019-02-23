@@ -47,9 +47,15 @@ class PinRow extends Component {
   	})
   	
   	let defaultPinModeValue;
+  	let checked = false;
   	let config = find(this.props.pinConfig, { address: Number(this.props.pin.address) });
   	if (config) {
   		defaultPinModeValue = config.pinMode;
+  		if (config.pinState) {
+  			if(config.pinState == 'HIGH') {
+  				checked = true;
+  			}
+  		}
   	}
   	
   	let pullUpModes = [];
@@ -62,6 +68,7 @@ class PinRow extends Component {
 	  		})
 	  	}
 	}
+	
   	let defaultPullUpMode = pullUpModes[0];
   	
   	return (
@@ -83,7 +90,7 @@ class PinRow extends Component {
         		</Table.Cell>
         		<Table.Cell>
         		    <Segment compact>
-				    	<Checkbox toggle onChange={this.onStateChange}/>
+				    	<Checkbox checked={checked} toggle onChange={this.onStateChange}/>
     				</Segment>
         		</Table.Cell>
       	</Table.Row>  	

@@ -1,17 +1,23 @@
 package ua.net.maxx.controller.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pi4j.io.gpio.GpioPin;
 import com.pi4j.io.gpio.PinMode;
 import com.pi4j.io.gpio.PinPullResistance;
+import com.pi4j.io.gpio.PinState;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PinSettings {
 
 	private final int address;
 	private final String name;
 	private final PinMode pinMode;
 	private final PinPullResistance pullResistance;
+	
+	@JsonProperty("pinState")
+	private PinState pinState;
 
 	public static PinSettings fromGpioPin(GpioPin pin) {
 		return new PinSettings(pin.getPin().getAddress(), pin.getName(), pin.getMode(), pin.getPullResistance());
@@ -26,6 +32,7 @@ public class PinSettings {
 		this.pinMode = pinMode;
 		this.pullResistance = pullResistance;
 	}
+	
 
 	public int getAddress() {
 		return address;
@@ -42,5 +49,15 @@ public class PinSettings {
 	public PinPullResistance getPullResistance() {
 		return pullResistance;
 	}
+
+	public PinState getPinState() {
+		return pinState;
+	}
+
+	public void setPinState(PinState pinState) {
+		this.pinState = pinState;
+	}
+
+
 
 }

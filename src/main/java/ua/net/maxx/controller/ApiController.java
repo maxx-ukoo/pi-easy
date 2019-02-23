@@ -37,10 +37,6 @@ public class ApiController {
 	@Get("/pins/provisioned")
 	public Collection<GpioPin> getProvisionedPins() {
 		Collection<GpioPin> pins = gpioSevice.getProvisionedPins();
-		pins.stream().forEach(pin -> {
-			System.out.println(pin.getName());
-			System.out.println(pin);
-		});
 		return pins.stream().sorted(new Comparator<GpioPin>() {
 			public int compare(GpioPin o1, GpioPin o2) {
 				return Integer.valueOf(o1.getPin().getAddress()).compareTo(Integer.valueOf(o2.getPin().getAddress()));
@@ -58,19 +54,15 @@ public class ApiController {
 				return Integer.valueOf(o1.getAddress()).compareTo(Integer.valueOf(o2.getAddress()));
 			}
 		});
-
 		config.put("pins", pins);
-		Collection<GpioPin> provisionedPins = gpioSevice.getProvisionedPins();
-		List<PinSettings> list = provisionedPins.stream().map(item -> PinSettings.fromGpioPin(item))
+		List<PinSettings> list =  gpioSevice.getPinsState().stream()
 				.sorted(new Comparator<PinSettings>() {
 					public int compare(PinSettings o1, PinSettings o2) {
 						return Integer.valueOf(o1.getAddress()).compareTo(Integer.valueOf(o2.getAddress()));
 					}
 				}).collect(Collectors.toList());
 		config.put("config", list);
-
-		// gpioSevice.getPinsState();
-
+		gpioSevice.getPinsState();
 		config.put("config", list);
 		return config;
 	}
