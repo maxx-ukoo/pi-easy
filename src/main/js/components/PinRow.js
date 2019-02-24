@@ -37,7 +37,32 @@ class PinRow extends Component {
 			console.log(response)
 		});
   }
+  
+  
+  componentDidMount(){
+        let { pin, pinConfig } = this.props;
+    	// this is an "echo" websocket service for testing pusposes
+    	this.connection = new WebSocket('ws://localhost:8080/ws/' + pin.address);
+    	
+    	var webSocket = new WebSocket("ws://localhost:8080/ws/" + pin.address);
+		webSocket.onmessage = function (msg) {
+		console.log(msg) 
+		console.log(msg.data)
+		};
+		webSocket.onclose = function () {
+		 	alert("WebSocket connection closed") 
+		};
+    	
+    	
+    	//webSocket.send( Math.random() );
 
+    	// for testing: sending a message to the echo service every 2 seconds, 
+    	// the service sends it right back
+    	//setInterval( _ =>{
+        //	this.connection.send( Math.random() )
+    	//}, 2000 )
+  }
+  
   render() {
   	let { pin, pinConfig } = this.props;
   	

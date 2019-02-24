@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -15,10 +16,14 @@ import com.pi4j.io.gpio.Pin;
 import com.pi4j.platform.Platform;
 import com.pi4j.platform.PlatformManager;
 
+import io.micronaut.core.convert.format.ReadableBytes;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.websocket.WebSocketBroadcaster;
+import io.micronaut.websocket.WebSocketSession;
 import ua.net.maxx.controller.dto.PinSettings;
 import ua.net.maxx.service.GPIOSevice;
 import ua.net.maxx.storage.domain.GlobalConfiguration;
@@ -33,7 +38,21 @@ public class ApiController {
 
 	@Inject
 	private StorageService storageService;
+	
+	@Inject
+	private WebSocketBroadcaster broadcaster;
 
+	@Get("/message")
+	public void message(@QueryValue("pin") String pin) {
+		System.out.println(broadcaster);
+		System.out.println(pin);
+		broadcaster.broadcastSync("HIGH =>" + pin, isValid(pin));
+	}
+	
+    private Predicate<WebSocketSession> isValid(String pin) {
+    	return s -> pin.equalsIgnoreCase(s.getUriVariables().get("pin", String.class, null));
+    }
+	
 	@Get("/pins/provisioned")
 	public Collection<GpioPin> getProvisionedPins() {
 		Collection<GpioPin> pins = gpioSevice.getProvisionedPins();
