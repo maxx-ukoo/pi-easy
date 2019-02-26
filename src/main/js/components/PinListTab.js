@@ -17,6 +17,9 @@ class PinListTab extends React.Component {
 							config: []
 						}
 					};
+		this.onPinModeChange = this.onPinModeChange.bind(this);
+        this.webSocket = new WebSocket("ws://localhost:8080/ws");
+        	
 	}
 	
 	componentDidMount() {
@@ -26,11 +29,17 @@ class PinListTab extends React.Component {
                 newState.config = response.data;
                 this.setState(newState);
             });
+    	    	
+		this.webSocket.onmessage = function (msg) {
+			console.log(msg) 
+			console.log(msg.data)
+		};
+		this.webSocket.onclose = function () {
+		 	alert("WebSocket connection closed") 
+		};
 	}
 	
 	onPinModeChange = (pin, newMode) => {
-
-
     	
     	const pinSettingsPayload = {
     	 	address: pin.address,
@@ -38,14 +47,28 @@ class PinListTab extends React.Component {
     		pinMode: newMode,
     		pullResistance: 'OFF'
 		};
-		const url = '/api/pin/config';
-		axios.put(url, JSON.stringify(pinSettingsPayload),{
-        	headers: {
-            	'Content-Type': 'application/json',
-        	}
-    	}).then(response => {
-			console.log(response)
-		});
+		
+		console.log('Connection: ' + this.webSocket);
+		
+		const message = {
+			type: 'SETMODE',
+			jsonContext: JSON.stringify(pinSettingsPayload) 
+		}
+		
+		console.log(message);
+		console.log(JSON.stringify(message)); 
+		
+		
+		this.webSocket.send( JSON.stringify(message) );
+		
+		//const url = '/api/pin/config';
+		//axios.put(url, JSON.stringify(pinSettingsPayload),{
+        //	headers: {
+        //    	'Content-Type': 'application/json',
+        //	}
+    	//}).then(response => {
+		//	console.log(response)
+		//});
 
   	}
 

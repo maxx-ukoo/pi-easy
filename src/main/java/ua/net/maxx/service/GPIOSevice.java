@@ -123,6 +123,14 @@ public class GPIOSevice {
 
 	private void configurePinInternal(int address, String pinName, PinMode pinMode, PinPullResistance pullResistance) {
 		Pin pin = PinProvider.getPinByAddress(address);
+		
+		//GpioPinDigitalInput inPin = inputMap.get(pin.getAddress());
+		//if (inPin != null) {
+		//	inPin.setMode(pinMode);
+		//}
+		//gpio.
+		//inPin.
+		
 		inputMap.remove(pin.getAddress());
 		outputMap.remove(pin.getAddress());
 		switch (pinMode) {
