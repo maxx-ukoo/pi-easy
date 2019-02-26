@@ -7,6 +7,7 @@ import com.pi4j.io.gpio.GpioPin;
 import com.pi4j.io.gpio.PinMode;
 import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.PinState;
+import ua.net.maxx.storage.domain.GPIOConfiguration;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PinSettings {
@@ -32,7 +33,10 @@ public class PinSettings {
 		this.pinMode = pinMode;
 		this.pullResistance = pullResistance;
 	}
-	
+
+	public static PinSettings fromPinConfig(GPIOConfiguration pinConfig) {
+		return new PinSettings(pinConfig.getAddress(), pinConfig.getName(), pinConfig.getMode(), pinConfig.getPullUp());
+	}
 
 	public int getAddress() {
 		return address;

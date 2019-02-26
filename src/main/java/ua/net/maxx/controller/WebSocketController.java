@@ -65,12 +65,17 @@ public class WebSocketController {
     	if ("SETMODE".contentEquals(wsMessage.type)) {
     		try {
     			PinSettings pinSettings = mapper.readValue(wsMessage.jsonContext, PinSettings.class);
-    			gpioSevice.configurePin(pinSettings);
+				pinSettings = gpioSevice.configurePin(pinSettings);
+				WsMessage response = new WsMessage();
+				response.type = "SETMODESTATE";
+				response.jsonContext = mapper.writeValueAsString(pinSettings);
+				broadcaster.broadcastSync(mapper.writeValueAsString(response), isValid(session));
+                System.out.println("message processed: " + mapper.writeValueAsString(response));
     		} catch (Exception e) {
     			LOG.info("Can't set pin mode", e);
     		}    		
     	}
-    	
+        System.out.println("message processed, exiting");
         //String msg = "[] ";
         //broadcaster.broadcast(msg, isValid(session)); 
     }

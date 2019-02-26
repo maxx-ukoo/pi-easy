@@ -6,8 +6,6 @@ import com.pi4j.io.gpio.BpiPin;
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.GpioPin;
-import com.pi4j.io.gpio.GpioPinDigitalInput;
-import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.NanoPiPin;
 import com.pi4j.io.gpio.OdroidC1Pin;
 import com.pi4j.io.gpio.OrangePiPin;
@@ -17,6 +15,7 @@ import com.pi4j.io.gpio.PinProvider;
 import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.io.gpio.impl.GpioPinImpl;
 import com.pi4j.platform.Platform;
 import com.pi4j.platform.PlatformManager;
 
@@ -28,9 +27,7 @@ import ua.net.maxx.utils.SimulatedPin;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -49,9 +46,6 @@ public class GPIOSevice {
 	private StorageService storageService;
 
 	GpioController gpio;
-
-	private final Map<Integer, GpioPinDigitalOutput> outputMap = new HashMap<>();
-	private final Map<Integer, GpioPinDigitalInput> inputMap = new HashMap<>();
 
 	@PostConstruct
 	private void initialize() {
@@ -104,16 +98,27 @@ public class GPIOSevice {
 		}
 	}
 
+	private GpioPin getProvisionedPin(int address) {
+        Pin pin = PinProvider.getPinByAddress(address);
+	    return gpio.getProvisionedPin(pin);
+    }
+
 	public String executeCommand(GPIOCommand command) {
-		GpioPinDigitalOutput currentPin = outputMap.get(command.getPin().getAddress());
-		if (currentPin == null) {
+        GpioPin pin = gpio.getProvisionedPin(command.getPin());
+        System.out.println("executeCommand" + pin.getClass());
+		if (pin == null) {
 			throw new IllegalStateException(String.format("Pin %s not configured", command.getPin().getName()));
 		}
-		currentPin.setState(command.getState());
+        ((GpioPinImpl)pin).setState(command.getState());
 		return "OK";
 	}
 
 	public Collection<GpioPin> getProvisionedPins() {
+
+		gpio.getProvisionedPins().stream()
+				.forEach(pin -> {
+					System.out.println(pin.getClass());
+				});
 		return gpio.getProvisionedPins();
 	}
 
@@ -123,29 +128,29 @@ public class GPIOSevice {
 
 	private void configurePinInternal(int address, String pinName, PinMode pinMode, PinPullResistance pullResistance) {
 		Pin pin = PinProvider.getPinByAddress(address);
-		
-		//GpioPinDigitalInput inPin = inputMap.get(pin.getAddress());
-		//if (inPin != null) {
-		//	inPin.setMode(pinMode);
-		//}
-		//gpio.
-		//inPin.
-		
-		inputMap.remove(pin.getAddress());
-		outputMap.remove(pin.getAddress());
+        GpioPin provisionedPin = gpio.getProvisionedPin(pin);
+
 		switch (pinMode) {
 		case DIGITAL_INPUT:
-			inputMap.put(pin.getAddress(), gpio.provisionDigitalInputPin(pin, pullResistance));
+		    if (provisionedPin == null) {
+                gpio.provisionDigitalInputPin(pin, pullResistance);
+            } else {
+		        provisionedPin.setMode(pinMode);
+            }
 			break;
 		case DIGITAL_OUTPUT:
-			outputMap.put(pin.getAddress(), gpio.provisionDigitalOutputPin(pin, pinName, PinState.LOW));
+            if (provisionedPin == null) {
+                gpio.provisionDigitalOutputPin(pin, pinName, PinState.LOW);
+            } else {
+                provisionedPin.setMode(pinMode);
+            }
 			break;
 		default:
 			throw new UnsupportedOperationException(String.format("Operation %s not supported", pinMode));
 		}
 	}
 
-	public void configurePin(int address, String pinName, PinMode pinMode, PinPullResistance pullResistance) {
+	public PinSettings configurePin(int address, String pinName, PinMode pinMode, PinPullResistance pullResistance) {
 		configurePinInternal(address, pinName, pinMode, pullResistance);
 		GPIOConfiguration pinConfig = storageService.getPinConfig(address);
 		if (pinConfig == null) {
@@ -156,11 +161,11 @@ public class GPIOSevice {
 		pinConfig.setName(pinName);
 		pinConfig.setPullUp(pullResistance);
 		storageService.setPinConfig(pinConfig);
-
+        return PinSettings.fromPinConfig(pinConfig);
 	}
 
-	public void configurePin(PinSettings pinSettings) {
-		configurePin(pinSettings.getAddress(), pinSettings.getName(), pinSettings.getPinMode(),
+	public PinSettings configurePin(PinSettings pinSettings) {
+		return configurePin(pinSettings.getAddress(), pinSettings.getName(), pinSettings.getPinMode(),
 				pinSettings.getPullResistance());
 	}
 
@@ -169,28 +174,15 @@ public class GPIOSevice {
 	}
 
 	public List<PinSettings> getPinsState() {
-		return gpio.getProvisionedPins().stream().map(item -> {
-						PinSettings settings = PinSettings.fromGpioPin(item);
-						outputMap.entrySet().stream()
-						.forEach(output -> {
-							if (settings.getAddress() == output.getValue().getPin().getAddress()) {
-								settings.setPinState(output.getValue().getState());
-							}
-						});
-						inputMap.entrySet().stream()
-						.forEach(output -> {
-							if (settings.getAddress() == output.getValue().getPin().getAddress()) {
-								settings.setPinState(output.getValue().getState());
-							}
-						});
-						return settings;
-					})
-				.sorted(new Comparator<PinSettings>() {
-					public int compare(PinSettings o1, PinSettings o2) {
-						return Integer.valueOf(o1.getAddress()).compareTo(Integer.valueOf(o2.getAddress()));
-					}
-				})
-				.collect(Collectors.toList());
+        return gpio.getProvisionedPins().stream().map(pin -> {
+            PinSettings settings = PinSettings.fromGpioPin(pin);
+            settings.setPinState(((GpioPinImpl)pin).getState());
+            return settings;
+        }).sorted(new Comparator<PinSettings>() {
+            public int compare(PinSettings o1, PinSettings o2) {
+                return Integer.valueOf(o1.getAddress()).compareTo(Integer.valueOf(o2.getAddress()));
+            }
+        }).collect(Collectors.toList());
 	}
 
 }

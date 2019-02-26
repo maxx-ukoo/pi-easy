@@ -1,12 +1,12 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
+
 import { Input, Icon, List, Table, Menu, Label } from 'semantic-ui-react'
-
-
 import axios from "axios";
+import { find, orderBy, findIndex } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 
 import PinRow from './PinRow'
-
 
 class PinListTab extends React.Component {
 
@@ -18,8 +18,29 @@ class PinListTab extends React.Component {
 						}
 					};
 		this.onPinModeChange = this.onPinModeChange.bind(this);
+		this.processMessage = this.processMessage.bind(this);
         this.webSocket = new WebSocket("ws://localhost:8080/ws");
         	
+	}
+
+	processMessage(msg) {
+	            console.log(msg)
+    			console.log(msg.data)
+
+    			let message = JSON.parse(msg.data);
+    			if (message.type) {
+    			    if (message.type == 'SETMODESTATE') {
+    			        let newPinState = JSON.parse(message.jsonContext);
+
+                        const newConfig = cloneDeep(this.state.config);
+
+    			        let idx = findIndex(newConfig.config, {address: newPinState.address});
+    			        newConfig.config[idx] = newPinState;
+    			        console.log('-------- new state -----------');
+    			        console.log(newConfig);
+                        this.setState({ config: newConfig })
+    			    }
+    			}
 	}
 	
 	componentDidMount() {
@@ -29,11 +50,8 @@ class PinListTab extends React.Component {
                 newState.config = response.data;
                 this.setState(newState);
             });
-    	    	
-		this.webSocket.onmessage = function (msg) {
-			console.log(msg) 
-			console.log(msg.data)
-		};
+		this.webSocket.onmessage = this.processMessage;
+
 		this.webSocket.onclose = function () {
 		 	alert("WebSocket connection closed") 
 		};
