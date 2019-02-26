@@ -19,28 +19,22 @@ class PinListTab extends React.Component {
 					};
 		this.onPinModeChange = this.onPinModeChange.bind(this);
 		this.processMessage = this.processMessage.bind(this);
+		this.onPinStateChange = this.onPinStateChange.bind(this);
+		
         this.webSocket = new WebSocket("ws://localhost:8080/ws");
-        	
 	}
 
 	processMessage(msg) {
-	            console.log(msg)
-    			console.log(msg.data)
-
-    			let message = JSON.parse(msg.data);
-    			if (message.type) {
-    			    if (message.type == 'SETMODESTATE') {
-    			        let newPinState = JSON.parse(message.jsonContext);
-
-                        const newConfig = cloneDeep(this.state.config);
-
-    			        let idx = findIndex(newConfig.config, {address: newPinState.address});
-    			        newConfig.config[idx] = newPinState;
-    			        console.log('-------- new state -----------');
-    			        console.log(newConfig);
-                        this.setState({ config: newConfig })
-    			    }
-    			}
+		let message = JSON.parse(msg.data);
+		if (message.type) {
+		    if (message.type == 'SETMODESTATE') {
+		        let newPinState = JSON.parse(message.jsonContext);
+                const newConfig = cloneDeep(this.state.config);
+		        let idx = findIndex(newConfig.config, {address: newPinState.address});
+		        newConfig.config[idx] = newPinState;
+                this.setState({ config: newConfig })
+		    }
+		}
 	}
 	
 	componentDidMount() {
@@ -57,6 +51,21 @@ class PinListTab extends React.Component {
 		};
 	}
 	
+	
+	
+	onPinStateChange = (address, value) => {
+	    const pinSettingsPayload = {
+    	 	address: address,
+			pinState: value
+		};
+		const message = {
+			type: 'SETSTATE',
+			jsonContext: JSON.stringify(pinSettingsPayload) 
+		}
+		this.webSocket.send( JSON.stringify(message) );
+	}
+	
+	
 	onPinModeChange = (pin, newMode) => {
     	
     	const pinSettingsPayload = {
@@ -65,17 +74,11 @@ class PinListTab extends React.Component {
     		pinMode: newMode,
     		pullResistance: 'OFF'
 		};
-		
-		console.log('Connection: ' + this.webSocket);
-		
+			
 		const message = {
 			type: 'SETMODE',
 			jsonContext: JSON.stringify(pinSettingsPayload) 
 		}
-		
-		console.log(message);
-		console.log(JSON.stringify(message)); 
-		
 		
 		this.webSocket.send( JSON.stringify(message) );
 		
@@ -115,7 +118,7 @@ class PinListTab extends React.Component {
 
 			    <Table.Body>
 			     {pins.map(pin => (
-			     	  <PinRow pin={pin} pinConfig={config} onPinModeChange={this.onPinModeChange} />
+			     	  <PinRow pin={pin} pinConfig={config} onPinStateChange={this.onPinStateChange}  onPinModeChange={this.onPinModeChange} />
 			      	))}  
 			    </Table.Body>
  			 </Table>)

@@ -13,9 +13,8 @@ class PinRow extends Component {
   	this.props.onPinModeChange(pin, data.value);
   }
   
-  onStateChange = (e, data) => {
+  onPinStateChange = (e, data) => {
     let { pin } = this.props;
-  	console.log(data.checked);
   	let value;
   	if (data.checked) {
   		value = 'HIGH';
@@ -23,23 +22,12 @@ class PinRow extends Component {
   	    value = 'LOW';
   	}
   	
+  	this.props.onPinStateChange(pin.address, value);
   	
-  	let cmd = 'GPIO,'+pin.address+','+value;
-  	console.log(cmd); 
-  	
-	const url = '/control';
-		axios.get(url, {
-  			params: {
-    			cmd: cmd
-  			}
-		})
-		.then(response => {
-			console.log(response)
-		});
   }
   
   
-  componentDidMount(){
+  _componentDidMount(){
         //let { pin, pinConfig } = this.props;
     	// this is an "echo" websocket service for testing pusposes
     	//this.connection = new WebSocket('ws://localhost:8080/ws/' + pin.address);
@@ -83,11 +71,9 @@ class PinRow extends Component {
   		}
   	}
   	
-  	let pullUpModes = [];
-  	console.log('1: => ' + pin.supportedPinPullResistance)
+  	let pullUpModes = []; 	
   	if (pin.supportedPinPullResistance) {
 	  	if (!Array.isArray(pin.supportedPinPullResistance) || !pin.supportedPinPullResistance.length) {
-	  		console.log('2: => ' + pin.supportedPinPullResistance)
 	  		pin.supportedPinPullResistance.map(mode => {
 	  	 			pullUpModes.push({ key: mode, value: mode, text: mode });
 	  		})
@@ -115,7 +101,7 @@ class PinRow extends Component {
         		</Table.Cell>
         		<Table.Cell>
         		    <Segment compact>
-				    	<Checkbox checked={checked} toggle onChange={this.onStateChange}/>
+				    	<Checkbox checked={checked} toggle onChange={this.onPinStateChange}/>
     				</Segment>
         		</Table.Cell>
       	</Table.Row>  	

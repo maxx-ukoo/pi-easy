@@ -15,16 +15,22 @@ import com.pi4j.io.gpio.PinProvider;
 import com.pi4j.io.gpio.PinPullResistance;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
+import com.pi4j.io.gpio.event.GpioPinListener;
+import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import com.pi4j.io.gpio.impl.GpioPinImpl;
 import com.pi4j.platform.Platform;
 import com.pi4j.platform.PlatformManager;
 
+import ua.net.maxx.controller.WebSocketController;
 import ua.net.maxx.controller.dto.PinSettings;
 import ua.net.maxx.storage.domain.GPIOConfiguration;
 import ua.net.maxx.storage.service.StorageService;
 import ua.net.maxx.utils.GPIOCommand;
 import ua.net.maxx.utils.SimulatedPin;
+import ua.net.maxx.utils.StateChangeListener;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -38,10 +44,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
-public class GPIOSevice {
+public class GPIOSevice implements GpioPinListenerDigital {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GPIOSevice.class);
 
+	private final List<StateChangeListener> listeners = new ArrayList<>();
+	
 	@Inject
 	private StorageService storageService;
 
@@ -133,10 +141,11 @@ public class GPIOSevice {
 		switch (pinMode) {
 		case DIGITAL_INPUT:
 		    if (provisionedPin == null) {
-                gpio.provisionDigitalInputPin(pin, pullResistance);
+		    	provisionedPin = gpio.provisionDigitalInputPin(pin, pullResistance);
             } else {
 		        provisionedPin.setMode(pinMode);
             }
+		    provisionedPin.addListener(this);
 			break;
 		case DIGITAL_OUTPUT:
             if (provisionedPin == null) {
@@ -183,6 +192,35 @@ public class GPIOSevice {
                 return Integer.valueOf(o1.getAddress()).compareTo(Integer.valueOf(o2.getAddress()));
             }
         }).collect(Collectors.toList());
+	}
+
+	public PinSettings setState(int address, PinState pinState) {
+		Pin pin = PinProvider.getPinByAddress(address);
+        GpioPin gpioPin = gpio.getProvisionedPin(pin);
+		if (pin == null) {
+			throw new IllegalStateException(String.format("Pin %s not configured", address));
+		}
+        ((GpioPinImpl)gpioPin).setState(pinState);
+        PinSettings settings = PinSettings.fromGpioPin(gpioPin);
+        settings.setPinState(((GpioPinImpl)gpioPin).getState());
+        return settings;
+	}
+
+	public void addListener(StateChangeListener listener) {
+		listeners.add(listener);
+	}
+
+	@Override
+	public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+        GpioPin gpioPin = event.getPin();
+        PinSettings settings = PinSettings.fromGpioPin(gpioPin);
+        settings.setPinState(((GpioPinImpl)gpioPin).getState());
+        
+		listeners.stream().forEach(listener -> {
+			listener.event(settings);
+		});
+		// TODO Auto-generated method stub
+		//System.out.println(" --> GPIO PIN STATE CHANGE: " + event.getPin() + " = " + event.getState());
 	}
 
 }
