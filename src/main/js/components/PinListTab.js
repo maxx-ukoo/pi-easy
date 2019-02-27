@@ -21,7 +21,7 @@ class PinListTab extends React.Component {
 		this.processMessage = this.processMessage.bind(this);
 		this.onPinStateChange = this.onPinStateChange.bind(this);
 		
-        this.webSocket = new WebSocket("ws://localhost:8080/ws");
+        this.webSocket = new WebSocket('ws://' + window.location.hostname + ':8080/ws');
 	}
 
 	processMessage(msg) {
