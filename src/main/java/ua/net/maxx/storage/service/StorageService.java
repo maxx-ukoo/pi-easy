@@ -4,8 +4,10 @@ import com.pi4j.platform.Platform;
 
 import ua.net.maxx.storage.domain.GPIOConfiguration;
 import ua.net.maxx.storage.domain.GlobalConfiguration;
+import ua.net.maxx.storage.domain.MQTTConfiguration;
 import ua.net.maxx.storage.repository.AppConfigurationRepository;
 import ua.net.maxx.storage.repository.GPIOConfigurationRepository;
+import ua.net.maxx.storage.repository.MQTTConfigurationRepository;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,11 +20,15 @@ public class StorageService {
 
 	private AppConfigurationRepository appConfigurationRepository;
 	private GPIOConfigurationRepository gpioConfigurationRepository;
+	private MQTTConfigurationRepository mqttConfigurationRepository;
 
 	@Inject
-	public StorageService(AppConfigurationRepository appConfigurationRepository, GPIOConfigurationRepository gpioConfigurationRepository) {
+	public StorageService(AppConfigurationRepository appConfigurationRepository,
+						  GPIOConfigurationRepository gpioConfigurationRepository,
+						  MQTTConfigurationRepository mqttConfigurationRepository) {
 		this.appConfigurationRepository = appConfigurationRepository;
 		this.gpioConfigurationRepository = gpioConfigurationRepository;
+		this.mqttConfigurationRepository = mqttConfigurationRepository;
 	}
 
 	public GlobalConfiguration getGlobalConfiguration() {
@@ -64,4 +70,15 @@ public class StorageService {
 		return gpioConfigurationRepository.findAll();
 	}
 
+    public List<MQTTConfiguration> getMQTTConfigs() {
+		return mqttConfigurationRepository.findAll();
+    }
+
+	public MQTTConfiguration upfateMQTTConfig(MQTTConfiguration mqttConfig) {
+		if (mqttConfig.getId() == null) {
+			return mqttConfigurationRepository.save(mqttConfig);
+		}
+		mqttConfigurationRepository.update(mqttConfig);
+		return mqttConfig;
+	}
 }

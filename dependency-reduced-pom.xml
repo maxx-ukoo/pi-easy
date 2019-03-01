@@ -70,6 +70,7 @@
               <goal>install-node-and-npm</goal>
             </goals>
             <configuration>
+              <skip>${skipNode}</skip>
               <nodeVersion>v10.11.0</nodeVersion>
               <npmVersion>6.4.1</npmVersion>
             </configuration>
@@ -80,6 +81,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
+              <skip>${skipNode}</skip>
               <arguments>install</arguments>
             </configuration>
           </execution>
@@ -88,6 +90,9 @@
             <goals>
               <goal>webpack</goal>
             </goals>
+            <configuration>
+              <skip>${skipNode}</skip>
+            </configuration>
           </execution>
         </executions>
         <configuration>
@@ -131,6 +136,20 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>all</id>
+      <properties>
+        <skipNode>false</skipNode>
+      </properties>
+    </profile>
+    <profile>
+      <id>java</id>
+      <properties>
+        <skipNode>true</skipNode>
+      </properties>
+    </profile>
+  </profiles>
   <repositories>
     <repository>
       <id>jcenter.bintray.com</id>

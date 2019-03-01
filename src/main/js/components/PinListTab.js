@@ -50,8 +50,7 @@ class PinListTab extends React.Component {
 		 	alert("WebSocket connection closed") 
 		};
 	}
-	
-	
+
 	
 	onPinStateChange = (address, value) => {
 	    const pinSettingsPayload = {
@@ -81,15 +80,6 @@ class PinListTab extends React.Component {
 		}
 		
 		this.webSocket.send( JSON.stringify(message) );
-		
-		//const url = '/api/pin/config';
-		//axios.put(url, JSON.stringify(pinSettingsPayload),{
-        //	headers: {
-        //    	'Content-Type': 'application/json',
-        //	}
-    	//}).then(response => {
-		//	console.log(response)
-		//});
 
   	}
 

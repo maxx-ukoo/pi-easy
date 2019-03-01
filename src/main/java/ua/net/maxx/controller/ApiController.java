@@ -16,17 +16,18 @@ import com.pi4j.io.gpio.Pin;
 import com.pi4j.platform.Platform;
 import com.pi4j.platform.PlatformManager;
 
-import io.micronaut.core.convert.format.ReadableBytes;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
-import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.websocket.WebSocketBroadcaster;
 import io.micronaut.websocket.WebSocketSession;
 import ua.net.maxx.controller.dto.PinSettings;
 import ua.net.maxx.service.GPIOSevice;
+import ua.net.maxx.service.MQTTService;
 import ua.net.maxx.storage.domain.GlobalConfiguration;
+import ua.net.maxx.storage.domain.MQTTConfiguration;
 import ua.net.maxx.storage.service.StorageService;
 import ua.net.maxx.utils.AppRestarter;
 
@@ -38,17 +39,13 @@ public class ApiController {
 
 	@Inject
 	private StorageService storageService;
+
+	@Inject
+	private MQTTService mqttService;
 	
 	@Inject
 	private WebSocketBroadcaster broadcaster;
 
-	@Get("/message")
-	public void message(@QueryValue("pin") String pin) {
-		System.out.println(broadcaster);
-		System.out.println(pin);
-		broadcaster.broadcastSync("HIGH =>" + pin, isValid(pin));
-	}
-	
     private Predicate<WebSocketSession> isValid(String pin) {
     	return s -> pin.equalsIgnoreCase(s.getUriVariables().get("pin", String.class, null));
     }
@@ -114,6 +111,16 @@ public class ApiController {
 			}
 		}).start();
 		return getConfig();
+	}
+
+	@Get("/mqtt/config")
+	public List<MQTTConfiguration> getMQTTConfig(@Body PinSettings pinSettings) {
+		return mqttService.getMQTTConfig();
+	}
+
+	@Post("/mqtt/config")
+	public MQTTConfiguration updateMQTTConfig(@Body MQTTConfiguration mqttConfig) {
+		return mqttService.updateMQTTConfig(mqttConfig);
 	}
 
 }

@@ -40,6 +40,11 @@
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+		<dependency>
 			<groupId>org.thymeleaf</groupId>
 			<artifactId>thymeleaf</artifactId>
 			<version>3.0.9.RELEASE</version>
@@ -118,6 +123,34 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>all</id>
+			<properties>
+				<skipNode>false</skipNode>
+			</properties>
+			<activation>
+				<property>
+					<name>environment</name>
+					<value>all</value>
+				</property>
+			</activation>
+		</profile>
+		<profile>
+			<id>java</id>
+			<properties>
+				<skipNode>true</skipNode>
+			</properties>
+			<activation>
+				<property>
+					<name>environment</name>
+					<value>java</value>
+				</property>
+			</activation>
+		</profile>
+	</profiles>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -134,6 +167,7 @@
 							<goal>install-node-and-npm</goal>
 						</goals>
 						<configuration>
+							<skip>${skipNode}</skip>
 							<nodeVersion>v10.11.0</nodeVersion>
 							<npmVersion>6.4.1</npmVersion>
 						</configuration>
@@ -144,10 +178,14 @@
 							<goal>npm</goal>
 						</goals>
 						<configuration>
+							<skip>${skipNode}</skip>
 							<arguments>install</arguments>
 						</configuration>
 					</execution>
 					<execution>
+						<configuration>
+							<skip>${skipNode}</skip>
+						</configuration>
 						<id>webpack build</id>
 						<goals>
 							<goal>webpack</goal>
