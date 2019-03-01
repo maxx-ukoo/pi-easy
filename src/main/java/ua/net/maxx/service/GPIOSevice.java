@@ -44,7 +44,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Context
+@Singleton
 public class GPIOSevice implements GpioPinListenerDigital {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GPIOSevice.class);
