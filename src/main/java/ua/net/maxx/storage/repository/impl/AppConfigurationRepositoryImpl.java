@@ -17,14 +17,11 @@ import java.util.Optional;
 
 public class AppConfigurationRepositoryImpl implements AppConfigurationRepository {
 
-	private final ApplicationConfiguration applicationConfiguration;
-	
     @PersistenceContext
     private EntityManager entityManager;
 
-    public AppConfigurationRepositoryImpl(@CurrentSession EntityManager entityManager, ApplicationConfiguration applicationConfiguration) {
+    public AppConfigurationRepositoryImpl(@CurrentSession EntityManager entityManager) {
         this.entityManager = entityManager;
-        this.applicationConfiguration = applicationConfiguration;
     }
 
     @Override

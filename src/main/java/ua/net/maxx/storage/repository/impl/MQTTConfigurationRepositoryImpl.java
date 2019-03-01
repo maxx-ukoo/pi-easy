@@ -16,14 +16,11 @@ import java.util.Optional;
 
 public class MQTTConfigurationRepositoryImpl implements MQTTConfigurationRepository {
 
-	private final ApplicationConfiguration applicationConfiguration;
-
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public MQTTConfigurationRepositoryImpl(@CurrentSession EntityManager entityManager, ApplicationConfiguration applicationConfiguration) {
+	public MQTTConfigurationRepositoryImpl(@CurrentSession EntityManager entityManager) {
 		this.entityManager = entityManager;
-		this.applicationConfiguration = applicationConfiguration;
 	}
 
 	@Override

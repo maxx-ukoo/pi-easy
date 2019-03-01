@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.pi4j.io.gpio.GpioPin;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.platform.Platform;
@@ -18,21 +21,24 @@ import com.pi4j.platform.PlatformManager;
 
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Put;
 import io.micronaut.websocket.WebSocketBroadcaster;
 import io.micronaut.websocket.WebSocketSession;
+import ua.net.maxx.controller.dto.MQTTSettings;
 import ua.net.maxx.controller.dto.PinSettings;
 import ua.net.maxx.service.GPIOSevice;
 import ua.net.maxx.service.MQTTService;
 import ua.net.maxx.storage.domain.GlobalConfiguration;
-import ua.net.maxx.storage.domain.MQTTConfiguration;
 import ua.net.maxx.storage.service.StorageService;
 import ua.net.maxx.utils.AppRestarter;
 
 @Controller("/api")
 public class ApiController {
+	
+	private static final Logger LOG = LoggerFactory.getLogger(ApiController.class);
 
 	@Inject
 	private GPIOSevice gpioSevice;
@@ -114,13 +120,20 @@ public class ApiController {
 	}
 
 	@Get("/mqtt/config")
-	public List<MQTTConfiguration> getMQTTConfig(@Body PinSettings pinSettings) {
-		return mqttService.getMQTTConfig();
+	public List<MQTTSettings> getMQTTConfig() {
+		return mqttService.getMQTTConfig().stream().map(item -> MQTTSettings.fromMQTTConfig(item)).collect(Collectors.toList());
 	}
 
 	@Post("/mqtt/config")
-	public MQTTConfiguration updateMQTTConfig(@Body MQTTConfiguration mqttConfig) {
-		return mqttService.updateMQTTConfig(mqttConfig);
+	public List<MQTTSettings> updateMQTTConfig(MQTTSettings mqttConfig) {
+		mqttService.updateMQTTConfig(mqttConfig);
+		return getMQTTConfig();
+	}
+	
+	@Delete("/mqtt/config/{id}")
+	public List<MQTTSettings> deleteMQTTConfig(Long id) {
+		mqttService.deleteMQTTConfig(id);
+		return getMQTTConfig();
 	}
 
 }

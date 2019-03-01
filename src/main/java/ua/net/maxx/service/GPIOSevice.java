@@ -22,6 +22,7 @@ import com.pi4j.io.gpio.impl.GpioPinImpl;
 import com.pi4j.platform.Platform;
 import com.pi4j.platform.PlatformManager;
 
+import io.micronaut.context.annotation.Context;
 import ua.net.maxx.controller.WebSocketController;
 import ua.net.maxx.controller.dto.PinSettings;
 import ua.net.maxx.storage.domain.GPIOConfiguration;
@@ -43,7 +44,7 @@ import javax.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Singleton
+@Context
 public class GPIOSevice implements GpioPinListenerDigital {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GPIOSevice.class);

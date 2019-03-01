@@ -16,6 +16,12 @@ public class CommandParser {
 
     private static Command parseGPICommand(String cmd) {
         String[] str = cmd.split(",");
-        return new GPIOCommand(CommandType.GPIO, RaspiPin.getPinByAddress(Integer.valueOf(str[1])), PinState.valueOf(str[2]));
+        PinState state;
+        try {
+        	state = PinState.getState(Integer.valueOf(str[2]));
+        } catch (Exception e) {
+        	state = PinState.valueOf(str[2]);
+        }
+        return new GPIOCommand(CommandType.GPIO, RaspiPin.getPinByAddress(Integer.valueOf(str[1])), state);
     }
 }

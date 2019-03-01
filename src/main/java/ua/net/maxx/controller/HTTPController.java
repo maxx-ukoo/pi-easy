@@ -3,7 +3,7 @@ package ua.net.maxx.controller;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.QueryValue;
-import ua.net.maxx.service.HTTPService;
+import ua.net.maxx.service.CommandService;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 public class HTTPController {
 
     @Inject
-    private HTTPService httpService;
+    private CommandService httpService;
 
     @Get
     public void cmd(@NotBlank @QueryValue("cmd") String cmd) {

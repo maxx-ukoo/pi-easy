@@ -27,8 +27,13 @@ public class MQTTConfiguration {
     @NotNull
     @Column(name = "host", nullable = false)
     private String host;
+    
+    private MQTTConfiguration() {
+    	
+    }
+    
 
-    public MQTTConfiguration(@NotNull Integer port, @NotNull String publisherId, @NotNull String host) {
+    public MQTTConfiguration(@NotNull String publisherId, @NotNull String host, @NotNull Integer port) {
         this.port = port;
         this.publisherId = publisherId;
         this.host = host;

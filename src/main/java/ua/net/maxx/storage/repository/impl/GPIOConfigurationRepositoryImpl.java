@@ -16,14 +16,11 @@ import java.util.Optional;
 
 public class GPIOConfigurationRepositoryImpl implements GPIOConfigurationRepository {
 
-	private final ApplicationConfiguration applicationConfiguration;
-	
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public GPIOConfigurationRepositoryImpl(@CurrentSession EntityManager entityManager, ApplicationConfiguration applicationConfiguration) {
+	public GPIOConfigurationRepositoryImpl(@CurrentSession EntityManager entityManager) {
 		this.entityManager = entityManager;
-		this.applicationConfiguration = applicationConfiguration;
 	}
 
 	@Override

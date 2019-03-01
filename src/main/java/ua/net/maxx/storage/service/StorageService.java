@@ -2,6 +2,7 @@ package ua.net.maxx.storage.service;
 
 import com.pi4j.platform.Platform;
 
+import ua.net.maxx.controller.dto.MQTTSettings;
 import ua.net.maxx.storage.domain.GPIOConfiguration;
 import ua.net.maxx.storage.domain.GlobalConfiguration;
 import ua.net.maxx.storage.domain.MQTTConfiguration;
@@ -12,6 +13,8 @@ import ua.net.maxx.storage.repository.MQTTConfigurationRepository;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
+
+//https://vladmihalcea.com/the-best-way-to-map-a-projection-query-to-a-dto-with-jpa-and-hibernate/
 
 @Singleton
 public class StorageService {
@@ -74,11 +77,24 @@ public class StorageService {
 		return mqttConfigurationRepository.findAll();
     }
 
-	public MQTTConfiguration upfateMQTTConfig(MQTTConfiguration mqttConfig) {
+	public MQTTConfiguration updateMQTTConfig(MQTTSettings mqttConfig) {
+		MQTTConfiguration config;
 		if (mqttConfig.getId() == null) {
-			return mqttConfigurationRepository.save(mqttConfig);
+			config = new MQTTConfiguration(mqttConfig.getPublisherId(), mqttConfig.getHost(),mqttConfig.getPort());
+			return mqttConfigurationRepository.save(config);
 		}
-		mqttConfigurationRepository.update(mqttConfig);
-		return mqttConfig;
+		config = mqttConfigurationRepository.findById(mqttConfig.getId()).get();
+		config.setPublisherId(mqttConfig.getPublisherId());
+		config.setHost(mqttConfig.getHost());
+		config.setPort(mqttConfig.getPort());
+		mqttConfigurationRepository.update(config);
+		return config;
+	}
+
+	public void deleteMQTTConfig(Long id) {
+		MQTTConfiguration config;
+		if (id != null) {
+			mqttConfigurationRepository.deleteById(id);
+		}
 	}
 }
