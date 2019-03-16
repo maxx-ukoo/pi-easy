@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface Device {
-    String deviceName();
+    String getId();
+    String getName();
     Iterable<String> supportedValues();
     Map<String, String> getValues();
     void init();

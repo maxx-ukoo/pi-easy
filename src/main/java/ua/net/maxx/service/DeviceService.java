@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ua.net.maxx.controller.ApiController;
 import ua.net.maxx.device.Device;
+import ua.net.maxx.dto.DeviceDto;
 
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
@@ -18,7 +19,7 @@ public class DeviceService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceService.class);
 
-    public List<String> list() {
+    public List<DeviceDto> list() {
         try (ScanResult scanResult = new ClassGraph().whitelistPackages("ua.net.maxx.device")
                 .scan()) {
             ClassInfoList widgetClasses = scanResult.getClassesImplementing("ua.net.maxx.device.Device");
@@ -29,13 +30,13 @@ public class DeviceService {
         }
     }
 
-    private String getDeviceDescription(String className) {
+    private DeviceDto getDeviceDescription(String className) {
         Class<?> clazz = null;
         try {
             clazz = Class.forName(className);
             Constructor<?> ctor = clazz.getConstructor();
             Device device = (Device) ctor.newInstance();
-            return device.deviceName();
+            return new DeviceDto(device.getId(), device.getName());
         } catch (Exception e) {
             LOG.error("Can't get device description", e);
         }

@@ -144,7 +144,7 @@
 			</properties>
 			<activation>
 				<property>
-					<name>env</name>
+					<name>buildMode</name>
 					<value>all</value>
 				</property>
 			</activation>
@@ -156,7 +156,19 @@
 			</properties>
 			<activation>
 				<property>
-					<name>env</name>
+					<name>buildMode</name>
+					<value>java</value>
+				</property>
+			</activation>
+		</profile>
+		<profile>
+			<id>lgtm</id>
+			<properties>
+				<skipNode>true</skipNode>
+			</properties>
+			<activation>
+				<property>
+					<name>env.LGTM_SRC</name>
 					<value>java</value>
 				</property>
 			</activation>

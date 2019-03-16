@@ -5,9 +5,11 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ua.net.maxx.dto.DeviceDto;
 import ua.net.maxx.service.DeviceService;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @Controller("/device")
 public class DeviceController {
@@ -21,7 +23,7 @@ public class DeviceController {
     }
 
     @Get
-    public Iterable<String> list() {
+    public List<DeviceDto> list() {
         return deviceService.list();
     }
 }

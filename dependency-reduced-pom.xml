@@ -159,6 +159,12 @@
         <skipNode>true</skipNode>
       </properties>
     </profile>
+    <profile>
+      <id>lgtm</id>
+      <properties>
+        <skipNode>true</skipNode>
+      </properties>
+    </profile>
   </profiles>
   <repositories>
     <repository>

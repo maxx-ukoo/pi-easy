@@ -26,8 +26,6 @@ public class BMP280Device implements Device {
 
     private static final Logger LOG = LoggerFactory.getLogger(BMP280Device.class);
 
-
-
     private List<Value> config;
 
     protected String getConfigValue(String name) {
@@ -62,8 +60,13 @@ public class BMP280Device implements Device {
     }
 
     @Override
-    public String deviceName() {
-        return "BMP280";
+    public String getName() {
+        return "BME280 sensor";
+    }
+
+    @Override
+    public String getId() {
+        return "BME280";
     }
 
     @Override
