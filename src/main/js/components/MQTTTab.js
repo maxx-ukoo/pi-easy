@@ -1,6 +1,5 @@
 const React = require('react');
-const ReactDOM = require('react-dom');
-import { Container, Header, Form, Button, Modal, Dropdown, Label, List } from 'semantic-ui-react'
+import { Container, Header, Form, Button, Dropdown, Label, List } from 'semantic-ui-react'
 
 import axios from "axios";
 import { findIndex } from 'lodash';
@@ -50,9 +49,6 @@ class MQTTTab extends React.Component {
     }
     
     onRemove = (e, data) => {
-        const payload = {
-            mqttConfig: this.state.selectedItem
-        };
         
         let { selectedItem } = this.state
         if (selectedItem && selectedItem.id) {

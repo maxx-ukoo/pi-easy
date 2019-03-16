@@ -1,9 +1,8 @@
 const React = require('react');
-const ReactDOM = require('react-dom');
 
-import { Input, Icon, List, Table, Menu, Label } from 'semantic-ui-react'
+import { Table, Label } from 'semantic-ui-react'
 import axios from "axios";
-import { find, orderBy, findIndex } from 'lodash';
+import { findIndex } from 'lodash';
 import cloneDeep from 'lodash/cloneDeep';
 
 import PinRow from './PinRow'
@@ -40,7 +39,7 @@ class PinListTab extends React.Component {
                     newConfig.config[idx].pinMode = message.mode;
                 }
                 console.log(newConfig.config[idx]);
-                this.setState({ config: newConfig })
+                this.setState({ config: newConfig });
 		    }
 		}
 	}

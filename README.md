@@ -1,6 +1,8 @@
 # Pi-Control
 
+
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/maxx-ukoo/pi-easy.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/maxx-ukoo/pi-easy/alerts/)
 
 Pi-Control is java based app to control pins state via HTTP or MQTT protocols with web UI
 

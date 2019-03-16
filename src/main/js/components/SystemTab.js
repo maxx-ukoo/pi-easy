@@ -1,5 +1,4 @@
 const React = require('react');
-const ReactDOM = require('react-dom');
 import {  Button, Modal, Dropdown, Label, List } from 'semantic-ui-react'
 
 import axios from "axios";

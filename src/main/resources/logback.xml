@@ -8,11 +8,24 @@
         </encoder>
     </appender>
 
+     <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <!-- use the previously created timestamp to create a uniquely
+            named log file -->
+        <file>/var/log/picontrol-${bySecond}.txt</file>
+        <encoder>
+        <pattern>%logger{35} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <root level="info">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
     </root>
 
     <logger name="ua.net.maxx" level="DEBUG">
+        <appender-ref ref="FILE" />
         <appender-ref ref="STDOUT" />
     </logger>
 

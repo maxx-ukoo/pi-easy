@@ -76,7 +76,7 @@ public class WebSocketController implements StateChangeListener<PinEvent> {
 
     @OnClose
     public void onClose(WebSocketSession session) {
-    	gpioSevice.removeListener(this);
+    	
     }
 
     private Predicate<WebSocketSession> isValid(WebSocketSession session) {
