@@ -5,7 +5,7 @@ import { Container, Header, Form, Button, Dropdown, Label, List } from 'semantic
 import axios from "axios";
 import { findIndex } from 'lodash';
 
-class MQTTTab extends React.Component {
+class DeviceTab extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -13,7 +13,7 @@ class MQTTTab extends React.Component {
 	}
 
 	componentDidMount() {
-	    axios.get('/devices')
+	    axios.get('/device')
             .then(response => {
                 let newState = Object.assign({}, this.state);
                 newState.devices = response.data;

@@ -168,8 +168,8 @@
 			</properties>
 			<activation>
 				<property>
-					<name>env.LGTM_SRC</name>
-					<value>java</value>
+					<name>pmd.skip</name>
+					<value>true</value>
 				</property>
 			</activation>
 		</profile>
