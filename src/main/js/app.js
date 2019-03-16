@@ -5,6 +5,7 @@ import { Container, Header } from 'semantic-ui-react'
 import SystemTab from './components/SystemTab';
 import PinListTab from './components/PinListTab';
 import MQTTTab from './components/MQTTTab';
+import DeviceTab from './components/DeviceTab';
 
 const panes = [
   {
@@ -23,6 +24,10 @@ const panes = [
       menuItem: { key: 'mqtt', icon: 'info', content: 'MQTT' },
       render: () => <Tab.Pane><MQTTTab/></Tab.Pane>,
   },
+  {
+      menuItem: { key: 'devices', icon: 'info', content: 'Devices' },
+      render: () => <Tab.Pane><DeviceTab/></Tab.Pane>,
+  }
 ]
 
 const App = () => (

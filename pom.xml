@@ -41,6 +41,11 @@
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
+			<groupId>io.github.classgraph</groupId>
+			<artifactId>classgraph</artifactId>
+			<version>4.8.14</version>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse.paho</groupId>
 			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
 			<version>1.2.1</version>
@@ -139,7 +144,7 @@
 			</properties>
 			<activation>
 				<property>
-					<name>env</name>
+					<name>buildMode</name>
 					<value>all</value>
 				</property>
 			</activation>
@@ -151,8 +156,20 @@
 			</properties>
 			<activation>
 				<property>
-					<name>env</name>
+					<name>buildMode</name>
 					<value>java</value>
+				</property>
+			</activation>
+		</profile>
+		<profile>
+			<id>lgtm</id>
+			<properties>
+				<skipNode>true</skipNode>
+			</properties>
+			<activation>
+				<property>
+					<name>pmd.skip</name>
+					<value>true</value>
 				</property>
 			</activation>
 		</profile>
